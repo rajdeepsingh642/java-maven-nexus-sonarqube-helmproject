@@ -26,7 +26,7 @@ pipeline{
          stage('docker build image'){
             steps{
                 script{
-                    sh 'docker build -t 192.168.1.228:8083/helm-argocd:${BUILD_ID} .'
+                    sh 'docker build -t 192.168.1.228:8083/java-app:${BUILD_ID} .'
 
                 }
             }
@@ -36,7 +36,7 @@ pipeline{
                 script{
                      withCredentials([string(credentialsId: 'nexus-token', variable: 'nexus_creds')]) {
                         sh "docker login -u admin -p $nexus_creds  192.168.1.228:8083"
-                        sh 'docker push 192.168.1.228:8083/helm-argocd:${BUILD_ID}'
+                        sh 'docker push 192.168.1.228:8083/java-app:${BUILD_ID}'
 
                 }
           
@@ -49,7 +49,7 @@ pipeline{
           steps{
             script{
               
-                    dir(' helm/j') {
+                    dir(' helm/java') {
                       withEnv(['DATREE_TOKEN=aa97d52e-a99b-4982-bcf4-e672a8b95db6']) {
                    sh 'helm datree test .' 
               }
@@ -70,9 +70,9 @@ pipeline{
              
     
                      echo "Packing helm chart"
-                      sh "helm package -d ${WORKSPACE}/helm ${WORKSPACE}/helm/devopsodia"
+                      sh "helm package -d ${WORKSPACE}/helm ${WORKSPACE}/helm/java"
            // sh "${WORKSPACE}/build.sh --pack_helm --push_helm --helm_repo ${HELM_REPO} --helm_usr ${HELM_USR} --helm_psw ${HELM_PSW}"
-                        sh "curl -u admin:${nexus_creds} http://192.168.1.228:8081/repository/helm-repo/ --upload-file ${WORKSPACE}/helm/devopsodia-1.tgz -v"
+                        sh "curl -u admin:${nexus_creds} http://192.168.1.228:8081/repository/helm-repo/ --upload-file ${WORKSPACE}/helm/java-1.tgz -v"
             
         }
                 }
@@ -89,8 +89,8 @@ pipeline{
           steps{
             script{
                
-                     dir(' helm/') {
-                        'sh helm upgrade --install --set image.repository="192.168.1.226:8083/springboot" --set image.tag="$BUILD_ID" myjavaaap singh/'
+                     dir(' helm/java') {
+                        'sh helm upgrade --install --set image.repository="192.168.1.226:8083/java-app" --set image.tag="$BUILD_ID" myjavaaap singh/'
                      
 
             }
