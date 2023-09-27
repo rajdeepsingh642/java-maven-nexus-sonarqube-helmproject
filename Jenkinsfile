@@ -84,23 +84,7 @@ pipeline{
         }
 
     }
-#      stage('pushin helm chart to nexus'){
- #          steps{
-  #             script{
-   #                withCredentials([string(credentialsId: 'nexus-token', variable: 'nexus_token')]) {
-#
- #                   dir(' helm/') {
-  #                  
-   #                  sh '''
-    #                 helmversion=$(helm show chart singh | grep version | cut -d: -f 2 | tr -d ' ')
-     #                tar -cvzf singh-${helmversion}.tgz singh/
-      #               curl -u admin:${nexus_token} http://192.168.1.228:8081/repository/helm-hosted/ --upload-file singh-${helmversion}.tgz -v
-       #                '''     
-        #             }
-        #          } 
-         #      }
-          # }
-        #}
+
       stage('deploye to k8s'){
           steps{
             script{
